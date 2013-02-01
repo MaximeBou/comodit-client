@@ -1,0 +1,6 @@
+{
+   "name":"<parameter name>",
+   "description":"<parameter description>",
+   "key":"<parameter key>",
+   "value":"<default value>"
+}

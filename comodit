@@ -1,0 +1,13 @@
+#!/usr/bin/env python
+# coding: utf-8
+# comodit | A command line client for ComodIT
+
+import sys
+
+from comodit_client import dispatch
+
+def main(argv):
+    dispatch.run(argv)
+
+if __name__ == "__main__":
+    main(sys.argv[1:])

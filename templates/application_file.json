@@ -1,0 +1,21 @@
+{
+  "name":"<file name>",
+  "path":"/path/to/file",
+  "owner":"root",
+  "group":"root",
+  "mode":"644",
+  "template": {
+    "delimiter": {
+      "start": "${",
+      "end": "}"
+    },
+    "parameters": [
+        {
+            "key": "<a key>",
+            "value": "<a value>",
+            "name": "<a name>",
+            "description": "<a description>"
+        }
+    ]
+  }
+}

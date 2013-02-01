@@ -1,0 +1,7 @@
+{
+    "username": "<user name>",
+    "password": "<user password>",
+    "fullname": "<full name>",
+    "email": "<user@server>",
+    "role": "<GUEST, USER, MANAGER or ADMIN>"
+}

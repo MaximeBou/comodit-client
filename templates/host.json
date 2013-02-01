@@ -1,0 +1,16 @@
+{
+   "name":"host",
+   "description":"The host description",
+   "environment":"Environment name",
+   "distribution": "Distribution name",
+   "applications": [
+     "Application name"
+   ],
+   "platform" : "Platform name",
+   "settings": [
+     {
+       "key": "<k>",
+       "value": "<v>"
+     }
+   ]
+}

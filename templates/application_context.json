@@ -1,0 +1,9 @@
+{
+   "application":"<app-name>",
+   "settings": [
+     {
+       "key": "<k>",
+       "value": "<v>"
+     }
+   ]
+}

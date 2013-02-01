@@ -1,0 +1,32 @@
+{
+    "name":"my-platform",
+    "description":"My application example",
+    "driver": {
+        "className" : "com.guardis.cortex.server.driver.LibvirtDriver"
+    },
+    "settings":
+    [
+        {
+            "key": "<key>",
+            "value":"<value>"
+        }
+    ],
+    "files":
+    [
+        {
+            "name": "<a file name>",
+            "delimiter": {
+               "start": "${",
+               "end": "}"
+            }
+        }
+    ],
+    "parameters": [
+       {
+           "key": "<a key>",
+           "value": "<a value>",
+           "name": "<a name>",
+           "description": "<a description>"
+        }
+    ]
+}

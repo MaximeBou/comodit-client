@@ -1,0 +1,11 @@
+.settings*
+.project
+.pydevproject
+*.pyc
+build
+dist
+*.egg-info
+lib/
+rpmbuild/SPECS/comodit-client.spec
+epydoc-html/
+conf/

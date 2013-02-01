@@ -1,0 +1,86 @@
+%{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
+
+%define main_package comodit_client
+
+Name: comodit-client
+Version: #VERSION#
+Release: #RELEASE#%{?dist}
+Summary: ComodIT command line interface
+Group: System Environment/Shells
+License: MIT
+URL: http://www.comodit.com
+Vendor: Guardis
+Source0: %{name}-%{version}-#RELEASE#.tar.gz
+
+BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+BuildArch: noarch
+
+Packager: Gerard Dethier <gerard.dethier@guardis.com>
+
+BuildRequires: python-devel
+BuildRequires: python-setuptools
+
+%if 0%{?fedora}
+Requires: python >= 2.7
+Requires: python(abi) >= 2.7
+%endif
+
+%if 0%{?rhel}
+Requires: python >= 2.6
+Requires: python(abi) >= 2.6
+Requires: python-argparse
+%endif
+
+Obsoletes: cortex-client
+
+%description
+
+ComodIT automates the management of an Information System through the entire
+life-cycle. Integrating in particular the management of virtual machines
+(though an hypervisor), the provisioning, the configuration management,
+auditing and monitoring.
+
+%prep
+%setup -c
+
+%build
+%{__python} setup.py build
+
+%install
+%{__rm} -rf %{buildroot}
+%{__mkdir} -p %{buildroot}/etc/comodit-client/
+%{__mkdir} -p %{buildroot}/usr/share/comodit-client/templates/
+%{__mkdir} -p %{buildroot}/etc/bash_completion.d/
+%{__mkdir} -p %{buildroot}/usr/share/man/man1/
+
+%{__python} setup.py install -O1 --skip-build --root %{buildroot}
+
+%{__cp} comodit %{buildroot}/usr/bin/comodit
+%{__cp} rpmbuild/etc/comodit-client/comodit-client.conf %{buildroot}/etc/comodit-client/
+%{__cp} templates/*.json %{buildroot}/usr/share/comodit-client/templates/
+%{__cp} auto_completion/comodit %{buildroot}/etc/bash_completion.d/comodit
+%{__cp} doc/comodit.1 %{buildroot}/usr/share/man/man1/comodit.1
+
+# Remove egg info
+%{__rm} -rf %{buildroot}/%{python_sitelib}/comodit_client*.egg-info
+
+%clean
+%{__rm} -rf %{buildroot}
+
+%files
+/usr/bin/comodit
+%config(noreplace)/etc/comodit-client/comodit-client.conf
+/usr/share/comodit-client/templates/*.json
+/etc/bash_completion.d/comodit
+/usr/share/man/man1/comodit.1.gz
+%{python_sitelib}/%{main_package}
+
+%changelog
+* Mon Jul 30 2012 Gerard Dethier <gerard.dethier@guardis.com> - 1.2.dev-19
+- Renamed client into comodit
+* Fri Jul 20 2012 Gerard Dethier <gerard.dethier@guardis.com> - 1.1.dev-14
+- Fixed RPM spec file
+* Fri Mar 16 2012 Gerard Dethier <gerard.dethier@guardis.com> - 0.9
+- Fixed bash completion script name
+* Tue Nov 22 2011 Gerard Dethier <gerard.dethier@guardis.com> - 0.9
+- Added man page

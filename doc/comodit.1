@@ -1,0 +1,2105 @@
+'\" t
+.\"     Title: comodit
+.\"    Author: Daniel Bartz <daniel.bartz@guardis.com>
+.\" Generator: DocBook XSL Stylesheets v1.76.1 <http://docbook.sf.net/>
+.\"      Date: 01/25/2013
+.\"    Manual: Command Line User Interface Guide
+.\"    Source: Guardis
+.\"  Language: English
+.\"
+.TH "COMODIT" "1" "01/25/2013" "Guardis" "Command Line User Interface Gu"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+comodit \- ComodIT command\-line interface
+.SH "SYNOPSIS"
+.HP \w'/usr/bin/comodit\ 'u
+/usr/bin/comodit [\-h\ |\ \-\-help] [\-f\ FILE\ |\-\-file\ FILE] [\-j\ FILE\ |\-\-json\ FILE] [\-d\ |\ \-\-default] [\-t\ |\ \-\-test] [\-p\ |\ \-\-populate] [\-\-raw] [\-\-flavor\ FLAVOR] [\-\-skip\-chown] [\-\-skip\-chmod] [\-\-skip\-conflict] [\-\-dry\-run] [\-\-public] [\-\-private] [\-\-featured] [\-\-org\ NAME] [\-\-api\ URL] [\-\-user\ USERNAME] [\-\-pass\ PASSWORD] [\-\-templates\ PATH] [\-\-profile\ NAME] [\-\-force] [\-\-debug] [\-\-version] {sel} [sel\ \&...] {action} [id\ \&...] [\&...]
+.SH "INTRODUCTION"
+.PP
+This section briefly describes ComodIT and the way you will, in general, interact with the client\&.
+.PP
+ComodIT provides an integrated platform to automate your public and private cloud applications deployment and management\&. Its main features are:
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+Descriptive approach: applications and infrastructure are easily described by abstracting the underlying platform operations\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+Configuration management: ComodIT automatically applies changes you requested via description modifications\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+Orchestration: Leverage the open API to integrate ComodIT with your own processes\&.
+.RE
+.PP
+ComodIT client allows to handle ComodIT entities by interacting with ComodIT server through its REST API\&. Here are the main entities:
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+organizations: an organization encompasses the entities that may be managed/used by a group of ComodIT users\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+applications: an application is defined in the context of an organization and represents a software solution that may be installed on a server\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+platforms: a platform is defined in the context of an organization\&. It represents a way to \*(Aqinstantiate\*(Aq (e\&.g\&. create a virtual machine) a server\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+distributions: a distribution is defined in the context of an organization\&. It represents an operating system to install on a server\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+environments: an environment is defined in the context of an organization\&. It represents a group of servers having common properties, access rights, etc\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+hosts: a host is defined in the context of an environment\&. It represents the description of a server: operating system, installed applications, etc\&.
+.RE
+.PP
+Some entities are generic and are associated to several of above entities:
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+parameters: a value expected by an application, a distribution or a platform\&. This value is identified by a name and has a key (see settings below)\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+settings: a key\-value pair that may be associated to an organization, an environment, a host, as well as an application, a distribution or a platform associated to a given host\&. The key should match a parameter key and, therefore, provide a value for this parameter\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+files: a file that may be associated to a distribution, a platform or an application\&.
+.RE
+.PP
+Entities are organized in collections\&. A particular collection may be owned by a particular entity\&. For instance, an organization owns collections of applications, distributions, settings, etc\&. Some collections are not owned by any entity, they are called root collections (for example, the collection of organizations)\&.
+.PP
+An interaction with the client generally represents an action applied to a particular entity\&. The arguments passed to the client can be separated into 3 groups:
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+selectors
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+action
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+identifier
+.RE
+.sp
+The selectors define a group of available actions, generally the actions that can be applied to a particular type of entity or its collection\&. For instance, the selectors for an application\*(Aqs settings are \*(Aqapplications settings\*(Aq\&. The action is composed of a single word and represents an operation to apply to a particular entity or collection\&. The identifier part allows to select a particular collection or entity to apply the action to\&. Sometimes, additional arguments are needed\&.
+.PP
+A final definition about selectors: let \*(Aqs1 s2\*(Aq be a valid list of selectors (i\&.e\&. valid arguments for the client), then s1 accepts s2\&.
+.PP
+Next section describes all selectors and actions\&. Examples are given at the end of this page\&.
+.SH "USAGE"
+.SS "Generic Actions"
+.PP
+Most selectors define the same common actions set\&. Specific actions are sometimes added to this set\&.
+.PP
+list ID
+.RS 4
+Lists the entities of given collection (identified by ID)\&.
+.RE
+.PP
+show ID [\-\-raw]
+.RS 4
+Prints informations about an entity to standard output\&. \-\-raw option causes the client to print the JSON representation of the resource\&.
+.RE
+.PP
+add [\-f FILE|\-\-file FILE|\-j JSON|\-\-json JSON] [ID]
+.RS 4
+Creates a new entity in a given collection\&. Without any option, a JSON template is opened with the editor defined by environment variables VISUAL or EDITOR\&. If these variables are not defined, \*(Aqnotepad\&.exe\*(Aq is used on Windows and \*(Aqvi\*(Aq on other systems\&. If opened template is saved, the creation is actually executed, otherwise it is aborted\&.
+.sp
+If \*(Aq\-f\*(Aq or \*(Aq\-\-file\*(Aq options is defined, the entity is created using JSON description from given file\&.
+.sp
+If \*(Aq\-j\*(Aq or \*(Aq\-\-json\*(Aq options is defined, the entity is created using JSON description read from standard input\&.
+.RE
+.PP
+update ID [\-f FILE|\-\-file FILE|\-j JSON|\-\-json JSON] [\-\-raw]
+.RS 4
+Updates an entity\&. By default, resource\*(Aqs JSON representation is opened with editor defined by environment variables VISUAL or EDITOR\&. If these variables are not defined, \*(Aqnotepad\&.exe\*(Aq is used on Windows and \*(Aqvi\*(Aq on other systems\&. If opened template is saved, the update is actually executed, otherwise it is aborted\&. In case the update is executed, updated entity is shown\&. \-\-raw option causes the client to print the JSON representation\&.
+.sp
+If \*(Aq\-f\*(Aq or \*(Aq\-\-file\*(Aq options is defined, user is updated using JSON description from given file\&.
+.sp
+If \*(Aq\-j\*(Aq or \*(Aq\-\-json\*(Aq options is defined, user is updated using JSON description read from standard input\&.
+.RE
+.PP
+delete ID
+.RS 4
+Deletes an entity\&.
+.RE
+.SS "Organizations"
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBSelectors\fR
+.RS 4
+.PP
+organizations
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBActions\fR
+.RS 4
+.PP
+All generic actions, an additional options is available when adding an organization:
+.PP
+\*(Aq\-\-populate\*(Aq or \*(Aq\-p\*(Aq
+.RS 4
+if the option is given, created organization will be populated with default environment, applications, distributions and platforms\&.
+.RE
+.PP
+The following specific actions are also available:
+.PP
+export ORG_NAME [PATH] [\-\-force]
+.RS 4
+Organization is exported onto disk in given folder\&. If no folder is given, a folder with organization\*(Aqs name is created and data written into it\&. If \-\-force option is set, data already present in output folder are overwritten\&.
+.RE
+.PP
+import PATH [\-\-force] [\-\-skip\-conflicts] [\-\-dry\-run]
+.RS 4
+Organization is imported from given folder\&. If \-\-force option is set, data already present on server are updated\&. \-\-skip\-conflicts implies that data already present are ignored\&. With \-\-dry\-run, actions are not actually performed but displayed on standard output\&.
+.RE
+.PP
+audit ORG_NAME
+.RS 4
+Prints audit logs for this organization\&.
+.RE
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBIdentifiers\fR
+.RS 4
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+For entity: NAME
+.sp
+where NAME is organization\*(Aqs name\&.
+.RE
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBAccepted selectors\fR
+.RS 4
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+groups
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+settings
+.RE
+.RE
+.SS "Platforms"
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBSelectors\fR
+.RS 4
+.PP
+platforms
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBActions\fR
+.RS 4
+.PP
+All generic actions but more options are available when adding a platform:
+.PP
+\*(Aq\-\-default\*(Aq or \*(Aq\-d\*(Aq
+.RS 4
+if the option is provided, platform\*(Aqs driver configures it i\&.e\&. adds required files and settings\&.
+.RE
+.PP
+\*(Aq\-\-test\*(Aq or \*(Aq\-t\*(Aq
+.RS 4
+if the option is provided, platform\*(Aqs driver validates given settings\&.
+.RE
+.PP
+The following specific actions are also available:
+.PP
+clone ORG_NAME PLAT_NAME CLONE_NAME
+.RS 4
+Creates a copy of given platform\&.
+.RE
+.PP
+import [PATH]
+.RS 4
+Platform is imported from given folder\&.
+.RE
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBIdentifiers\fR
+.RS 4
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+For collection: ORG
+.sp
+where ORG is the name of an organization\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+For entity: ORG NAME
+.sp
+where ORG is the name of an organization and NAME is platform\*(Aqs name\&.
+.RE
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBAccepted selectors\fR
+.RS 4
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+files
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+parameters
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+settings
+.RE
+.RE
+.SS "Distributions"
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBSelectors\fR
+.RS 4
+.PP
+distributions
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBActions\fR
+.RS 4
+.PP
+All generic actions but an additional option is available when adding a distribution:
+.PP
+\*(Aq\-\-flavor FLAVOR\*(Aq
+.RS 4
+if the option is given, selects the flavor of created distribution, letting the server adding default files, parameters and/or settings\&. See \*(Aqflavors\*(Aq resource\&.
+.RE
+.PP
+The following specific actions are also available:
+.PP
+clone ORG_NAME APP_NAME CLONE_NAME
+.RS 4
+Creates a copy of given distribution\&.
+.RE
+.PP
+import PATH
+.RS 4
+Distribution is imported from given folder\&.
+.RE
+.PP
+publish ORG_NAME APP_NAME
+.RS 4
+Publishes distribution into store\&.
+.RE
+.PP
+unpublish ORG_NAME APP_NAME
+.RS 4
+Unpublishes distribution from store\&.
+.RE
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBIdentifiers\fR
+.RS 4
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+For collection: ORG
+.sp
+where ORG is the name of an organization\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+For entity: ORG NAME
+.sp
+where ORG is the name of an organization and NAME is distribution\*(Aqs name\&.
+.RE
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBAccepted selectors\fR
+.RS 4
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+files
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+parameters
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+settings
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+sync
+.RE
+.RE
+.SS "Applications"
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBSelectors\fR
+.RS 4
+.PP
+applications
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBActions\fR
+.RS 4
+.PP
+Applications support all generic actions\&.
+.PP
+The following specific actions are also available:
+.PP
+clone ORG_NAME APP_NAME CLONE_NAME
+.RS 4
+Creates a copy of given application\&.
+.RE
+.PP
+import [PATH]
+.RS 4
+Application is imported from given folder\&.
+.RE
+.PP
+publish ORG_NAME APP_NAME
+.RS 4
+Publishes application into store\&.
+.RE
+.PP
+unpublish ORG_NAME APP_NAME
+.RS 4
+Unpublishes application from store\&.
+.RE
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBIdentifiers\fR
+.RS 4
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+For collection: ORG
+.sp
+where ORG is the name of an organization\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+For entity: ORG NAME
+.sp
+where ORG is the name of an organization and NAME is application\*(Aqs name\&.
+.RE
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBAccepted selectors\fR
+.RS 4
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+files
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+parameters
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+sync
+.RE
+.RE
+.SS "Environments"
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBSelectors\fR
+.RS 4
+.PP
+enviromnents
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBActions\fR
+.RS 4
+.PP
+All generic actions\&.
+.PP
+The following specific actions are also available:
+.PP
+clone ORG_NAME ENV_NAME CLONE_NAME
+.RS 4
+Creates a copy of given environment\&.
+.RE
+.PP
+audit ORG_NAME ENV_NAME
+.RS 4
+Prints audit logs for this environment\&.
+.RE
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBIdentifiers\fR
+.RS 4
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+For collection: ORG
+.sp
+where ORG is an organization\*(Aqs name\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+For entity: ORG NAME
+.sp
+where ORG is an organization\*(Aqs name and NAME is environment\*(Aqs name\&.
+.RE
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBAccepted selectors\fR
+.RS 4
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+settings
+.RE
+.RE
+.SS "Hosts"
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBSelectors\fR
+.RS 4
+.PP
+hosts
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBActions\fR
+.RS 4
+.PP
+All generic actions\&.
+.PP
+The following specific actions are also available:
+.PP
+render\-tree ORG_NAME ENV_NAME HOST_NAME PATH
+.RS 4
+Renders all application files associated to given host\&. Rendered files are output in given folder\&.
+.RE
+.PP
+changes ORG_NAME ENV_NAME HOST_NAME
+.RS 4
+Displays pending changes for given host\&.
+.RE
+.PP
+clear\-changes ORG_NAME ENV_NAME HOST_NAME
+.RS 4
+Clears pending changes for given host\&.
+.RE
+.PP
+provision ORG_NAME ENV_NAME HOST_NAME
+.RS 4
+Provisions (i\&.e\&. instantiates and configures) given host\&. This action creates the instance of the host\&.
+.RE
+.PP
+audit ORG_NAME ENV_NAME HOST_NAME
+.RS 4
+Prints audit logs for this host\&.
+.RE
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBIdentifiers\fR
+.RS 4
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+For collection: ORG ENV
+.sp
+where ORG is an organization\*(Aqs name and ENV an environment name\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+For entity: ORG ENV NAME
+.sp
+where ORG is an organization\*(Aqs name, ENV an environment name and NAME is a host name\&.
+.RE
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBAccepted selectors\fR
+.RS 4
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+instance
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+applications
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+platform
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+distribution
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+live
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+compliance
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+settings
+.RE
+.RE
+.SS "Instance"
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBSelectors\fR
+.RS 4
+.PP
+hosts instance
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBActions\fR
+.RS 4
+.PP
+The following actions are available:
+.PP
+start ORG_NAME ENV_NAME HOST_NAME
+.RS 4
+Starts the instance\&.
+.RE
+.PP
+poweroff ORG_NAME ENV_NAME HOST_NAME
+.RS 4
+Powers the instance off\&.
+.RE
+.PP
+pause ORG_NAME ENV_NAME HOST_NAME
+.RS 4
+Pauses the instance\&.
+.RE
+.PP
+shutdown ORG_NAME ENV_NAME HOST_NAME
+.RS 4
+Shuts the instance down\&.
+.RE
+.PP
+show ORG_NAME ENV_NAME HOST_NAME
+.RS 4
+Shows an instance\*(Aqs details\&.
+.RE
+.PP
+resume ORG_NAME ENV_NAME HOST_NAME
+.RS 4
+Resumes the execution of an instance\&.
+.RE
+.PP
+properties ORG_NAME ENV_NAME HOST_NAME
+.RS 4
+Displayes the properties of an instance\&.
+.RE
+.PP
+delete ORG_NAME ENV_NAME HOST_NAME
+.RS 4
+Deletes an instance\&.
+.RE
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBIdentifiers\fR
+.RS 4
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+For entity: ORG ENV NAME
+.sp
+where ORG is an organization\*(Aqs name, ENV an environment name and NAME is a host name\&.
+.RE
+.RE
+.SS "Application context"
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBSelectors\fR
+.RS 4
+.PP
+hosts applications
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBActions\fR
+.RS 4
+.PP
+show ORG_NAME ENV_NAME HOST_NAME APP_NAME
+.RS 4
+Shows the details of an application context\&.
+.RE
+.PP
+list ORG_NAME ENV_NAME HOST_NAME
+.RS 4
+Lists the applications installed on a given host\&.
+.RE
+.PP
+install ORG_NAME ENV_NAME HOST_NAME APP_NAME [\-f FILE|\-\-file FILE|\-j JSON|\-\-json JSON]
+.RS 4
+Installs an application on a host\&.
+.RE
+.PP
+uninstall ORG_NAME ENV_NAME HOST_NAME APP_NAME
+.RS 4
+Uninstalls an application from a host\&.
+.RE
+.PP
+render\-file ORG_NAME ENV_NAME HOST_NAME APP_NAME FILE_NAME
+.RS 4
+Displays the rendering of a file of an installed application\&.
+.RE
+.PP
+link ORG_NAME ENV_NAME HOST_NAME APP_NAME FILE_NAME
+.RS 4
+Displays a one\-time URL for given file\&.
+.RE
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBIdentifiers\fR
+.RS 4
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+For entity: ORG ENV NAME
+.sp
+where ORG is an organization\*(Aqs name, ENV an environment name and NAME is a host name\&.
+.RE
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBAccepted selectors\fR
+.RS 4
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+settings
+.RE
+.RE
+.SS "Distribution context"
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBSelectors\fR
+.RS 4
+.PP
+hosts distribution
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBActions\fR
+.RS 4
+.PP
+show ORG_NAME ENV_NAME HOST_NAME
+.RS 4
+Shows the details of a distribution context\&.
+.RE
+.PP
+add ORG_NAME ENV_NAME HOST_NAME [\-f FILE|\-\-file FILE|\-j JSON|\-\-json JSON]
+.RS 4
+Sets the distribution associated to given host\&.
+.RE
+.PP
+delete ORG_NAME ENV_NAME HOST_NAME
+.RS 4
+Unsets the distribution associated to given host\&.
+.RE
+.PP
+render\-file ORG_NAME ENV_NAME HOST_NAME FILE_NAME
+.RS 4
+Displays the rendering of a file of the distribution\&.
+.RE
+.PP
+link ORG_NAME ENV_NAME HOST_NAME FILE_NAME
+.RS 4
+Displays a one\-time URL for given file\&.
+.RE
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBIdentifiers\fR
+.RS 4
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+For entity: ORG ENV NAME
+.sp
+where ORG is an organization\*(Aqs name, ENV an environment name and NAME is a host name\&.
+.RE
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBAccepted selectors\fR
+.RS 4
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+settings
+.RE
+.RE
+.SS "Platform context"
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBSelectors\fR
+.RS 4
+.PP
+hosts platform
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBActions\fR
+.RS 4
+.PP
+show ORG_NAME ENV_NAME HOST_NAME
+.RS 4
+Shows the details of a platform context\&.
+.RE
+.PP
+add ORG_NAME ENV_NAME HOST_NAME [\-f FILE|\-\-file FILE|\-j JSON|\-\-json JSON]
+.RS 4
+Sets the platform associated to given host\&.
+.RE
+.PP
+delete ORG_NAME ENV_NAME HOST_NAME APP_NAME
+.RS 4
+Unsets the platform associated to given host\&.
+.RE
+.PP
+render\-file ORG_NAME ENV_NAME HOST_NAME APP_NAME FILE_NAME
+.RS 4
+Displays the rendering of a file of the platform\&.
+.RE
+.PP
+link ORG_NAME ENV_NAME HOST_NAME FILE_NAME
+.RS 4
+Displays a one\-time URL for given file\&.
+.RE
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBIdentifiers\fR
+.RS 4
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+For entity: ORG ENV NAME
+.sp
+where ORG is an organization\*(Aqs name, ENV an environment name and NAME is a host name\&.
+.RE
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBAccepted selectors\fR
+.RS 4
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+settings
+.RE
+.RE
+.SS "Compliance"
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBSelectors\fR
+.RS 4
+.PP
+hosts compliance
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBActions\fR
+.RS 4
+.PP
+show ORG_NAME ENV_NAME HOST_NAME applications/APP_NAME/RES_TYPE/RES_NAME
+.RS 4
+Shows the details of a compliance error\&. RES_TYPE is one of \*(Aqfiles\*(Aq, \*(Aqservices\*(Aq or \*(Aqpackages\*(Aq\&.
+.RE
+.PP
+list ORG_NAME ENV_NAME HOST_NAME
+.RS 4
+Lists the compliance errors of this host\&.
+.RE
+.PP
+delete ORG_NAME ENV_NAME HOST_NAME applications/APP_NAME/RES_TYPE/RES_NAME
+.RS 4
+Deletes a compliance error\&. RES_TYPE is one of \*(Aqfiles\*(Aq, \*(Aqservices\*(Aq or \*(Aqpackages\*(Aq\&.
+.RE
+.PP
+delete\-all ORG_NAME ENV_NAME HOST_NAME FILE_NAME
+.RS 4
+Deletes all compliance errors\&.
+.RE
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBIdentifiers\fR
+.RS 4
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+For entity: ORG ENV NAME
+.sp
+where ORG is an organization\*(Aqs name, ENV an environment name and NAME is a host name\&.
+.RE
+.RE
+.SS "Files"
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBSelectors\fR
+.RS 4
+.PP
+ID files
+.PP
+where ID is a list of selectors\&.
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBActions\fR
+.RS 4
+.PP
+All generic actions and the following specific actions:
+.PP
+show\-content ID
+.RS 4
+Prints the content of the file on standard output\&.
+.RE
+.PP
+set\-content ID PATH
+.RS 4
+Uploads the content of local file PATH to file identified by ID\&.
+.RE
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBIdentifiers\fR
+.RS 4
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+For collection: ID
+.sp
+where ID is the identifier of owning entity\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+For entity: ID NAME
+.sp
+where ID is the identifier of owning entity and NAME is file\*(Aqs name\&.
+.RE
+.RE
+.SS "Parameters"
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBSelectors\fR
+.RS 4
+.PP
+ID parameters
+.PP
+where ID is a list of selectors\&.
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBActions\fR
+.RS 4
+.PP
+All generic actions\&.
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBIdentifiers\fR
+.RS 4
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+For collection: ID
+.sp
+where ID is the identifier of owning entity\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+For entity: ID NAME
+.sp
+where ID is the identifier of owning entity and NAME is parameter\*(Aqs name\&.
+.RE
+.RE
+.SS "Settings"
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBSelectors\fR
+.RS 4
+.PP
+ID settings
+.PP
+where ID is a list of selectors\&.
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBActions\fR
+.RS 4
+.PP
+All generic actions\&.
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBIdentifiers\fR
+.RS 4
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+For collection: ID
+.sp
+where ID is the identifier of owning entity\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+For entity: ID NAME
+.sp
+where ID is the identifier of owning entity and NAME is setting\*(Aqs name\&.
+.RE
+.RE
+.SS "Flavors"
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBSelectors\fR
+.RS 4
+.PP
+flavors
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBActions\fR
+.RS 4
+.PP
+Flavors are read\-only\&. Only \*(Aqlist\*(Aq and \*(Aqshow\*(Aq actions are supported\&.
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBIdentifiers\fR
+.RS 4
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+For entity: NAME
+.sp
+where NAME is a flavor\*(Aqs name\&.
+.RE
+.RE
+.SS "Live Management"
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBSelectors\fR
+.RS 4
+.PP
+hosts live
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBActions\fR
+.RS 4
+.PP
+install\-package ORG_NAME ENV_NAME HOST_NAME APP_NAME PACKAGE_RES_NAME
+.RS 4
+(Re)installs package on machine\&.
+.RE
+.PP
+restart\-service ORG_NAME ENV_NAME HOST_NAME APP_NAME SERVICE_RES_NAME
+.RS 4
+Re\-starts service on machine\&.
+.RE
+.PP
+update\-file ORG_NAME ENV_NAME HOST_NAME APP_NAME FILE_RES_NAME
+.RS 4
+Updates file on machine\&.
+.RE
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBIdentifiers\fR
+.RS 4
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+For entity: ORG ENV NAME
+.sp
+where ORG is an organization\*(Aqs name, ENV an environment name and NAME is a host name\&.
+.RE
+.RE
+.SS "Application Store"
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBSelectors\fR
+.RS 4
+.PP
+app\-store
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBActions\fR
+.RS 4
+.PP
+list [\-\-featured|\-\-private|\-\-public][\-\-org ORG_NAME]
+.RS 4
+Lists the applications published in the store\&. Options \-\-featured, \-\-private or \-\-public set store\*(Aqs filter\&. \-\-org sets the organization when accessing private applications\&.
+.RE
+.PP
+show UUID [\-\-org ORG_NAME]
+.RS 4
+Shows an applications published in the store\&. \-\-org sets the organization when accessing private applications\&.
+.RE
+.PP
+purchase UUID [\-\-org ORG_NAME]
+.RS 4
+Purchases selected application and copies it into provided organization\&.
+.RE
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBIdentifiers\fR
+.RS 4
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+For entity: UUID
+.sp
+where UUID is the UUID of published application\&.
+.RE
+.RE
+.SS "Distribution Store"
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBSelectors\fR
+.RS 4
+.PP
+dist\-store
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBActions\fR
+.RS 4
+.PP
+list [\-\-featured|\-\-private|\-\-public][\-\-org ORG_NAME]
+.RS 4
+Lists the distributions published in the store\&. Options \-\-featured, \-\-private or \-\-public set store\*(Aqs filter\&. \-\-org sets the organization when accessing private distributions\&.
+.RE
+.PP
+show UUID [\-\-org ORG_NAME]
+.RS 4
+Shows an distributions published in the store\&. \-\-org sets the organization when accessing private distributions\&.
+.RE
+.PP
+purchase UUID [\-\-org ORG_NAME]
+.RS 4
+Purchases selected distribution and copies it into provided organization\&.
+.RE
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBIdentifiers\fR
+.RS 4
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+For entity: UUID
+.sp
+where UUID is the UUID of published distribution\&.
+.RE
+.RE
+.SS "Synchronization"
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBSelectors\fR
+.RS 4
+.PP
+ID sync
+.PP
+where ID is a list of selectors accepting sync\&.
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBActions\fR
+.RS 4
+.PP
+pull ORG_NAME NAME PATH [\-\-dry\-run]
+.RS 4
+Updates local files with data from entity\&. Local files may be created, deleted and/or updated\&. Entity stays untouched\&. \*(Aq\-\-dry\-run\*(Aq option allows to print actions that will be taken without applying them\&.
+.RE
+.PP
+push ORG_NAME NAME PATH [\-\-dry\-run]
+.RS 4
+Updates entity with local files\&. Entity is updated but local files stay untouched\&. \*(Aq\-\-dry\-run\*(Aq option allows to print actions that will be taken without applying them\&.
+.RE
+.RE
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.ps +1
+\fBIdentifiers\fR
+.RS 4
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+For entity: ID
+.sp
+where ID is the identifier of target entity\&.
+.RE
+.RE
+.SH "OPTIONS"
+.PP
+\-f FILE |\-\-file FILE
+.RS 4
+Provides a JSON description in a file (see \*(Aqadd\*(Aq and \*(Aqupdate\*(Aq actions)\&.
+.RE
+.PP
+\-j FILE |\-\-json FILE
+.RS 4
+Provides a JSON description via standard input (see \*(Aqadd\*(Aq and \*(Aqupdate\*(Aq actions)\&.
+.RE
+.PP
+\-d | \-\-default
+.RS 4
+Let driver add required files and/or settings to newly created platform\&.
+.RE
+.PP
+\-t | \-\-test
+.RS 4
+Let driver test provided settings of newly created platform\&.
+.RE
+.PP
+\-p | \-\-populate
+.RS 4
+Populate newly created organization with default environment, distribution and platform\&.
+.RE
+.PP
+\-\-skip\-conflict
+.RS 4
+If this option is set, conflicting resources are not imported during organization import\&.
+.RE
+.PP
+\-\-dry\-run
+.RS 4
+On organization import, sync pull or sync push, do not actually execute anything but display actions that would be executed\&.
+.RE
+.PP
+\-\-raw
+.RS 4
+JSON representation is dumped to standard output instead of a more \*(Aquser friendly\*(Aq presentation\&. (see \*(Aqshow\*(Aq and \*(Aqupdate\*(Aq actions)\&.
+.RE
+.PP
+\-\-skip\-chown
+.RS 4
+Skips ownership setting on files (see \*(Aqtree\*(Aq action for hosts)\&.
+.RE
+.PP
+\-\-skip\-chmod
+.RS 4
+Skips mode setting on files (see \*(Aqtree\*(Aq action for hosts)\&.
+.RE
+.PP
+\-\-public
+.RS 4
+Only public store entries are listed\&.
+.RE
+.PP
+\-\-private
+.RS 4
+Only private store entries are listed\&. \-\-org option must also be set\&.
+.RE
+.PP
+\-\-featured
+.RS 4
+Only featured store entries are listed\&.
+.RE
+.PP
+\-\-org NAME
+.RS 4
+Must be used in conjunction of \-\-private option; only private store entries shared with named organization are listed (user used to login must be part of the organization)\&.
+.RE
+.PP
+\-\-api URL
+.RS 4
+Sets the URL of ComodIT server\*(Aqs API\&.
+.RE
+.PP
+\-\-user USERNAME
+.RS 4
+Sets the user name to use for authentication\&.
+.RE
+.PP
+\-\-pass PASSWORD
+.RS 4
+Sets the password to use for authentication\&.
+.RE
+.PP
+\-\-templates PATH
+.RS 4
+Sets templates directory\&. Templates are used when creating a resource in interactive mode (see \*(Aqadd\*(Aq)\&.
+.RE
+.PP
+\-\-profile NAME
+.RS 4
+Sets connection profile\&. A connection profile encompasses an URL to a ComodIT server API, a user name and a password\&. Profiles are defined in configuration file\&. NAME is the name of a profile of the configuration file\&.
+.RE
+.PP
+\-\-debug
+.RS 4
+Prints complete stack trace in case of error\&. Only error message is displayed by default\&.
+.RE
+.PP
+\-\-version
+.RS 4
+Prints version information\&.
+.RE
+.SH "CONFIGURATION FILES"
+.PP
+Client reads connection informations from a configuration file\&. Following files are parsed (files are listed in increasing order of priority):
+.RS 4
+\&./conf/comodit\-client\&.conf
+.RE
+.RS 4
+~/\&.comoditrc
+.RE
+.RS 4
+/etc/comodit\-client/comodit\-client\&.conf
+.RE
+.PP
+A configuration file should contain one or serveral profiles\&. A profile is the URL of a ComodIT server\*(Aqs API, a user name and a password\&. Option \-\-profile can be used to select a particular profile\&. The configuration file also contains the profile to use by default, when no profile is selected\&.
+.PP
+Here is an example of configuration file:
+.RS 4
+ 
+.RE
+.RS 4
+[client]
+.RE
+.RS 4
+default_profile = default
+.RE
+.RS 4
+ 
+.RE
+.RS 4
+[default]
+.RE
+.RS 4
+api = http://localhost:8000/api
+.RE
+.RS 4
+username = admin
+.RE
+.RS 4
+password = secret
+.RE
+.PP
+By default, profile with name \*(Aqdefault\*(Aq is used\&. This profile defines \*(Aqhttp://localhost:8000/api\*(Aq as the API URL (see \-\-api option), \*(Aqadmin\*(Aq as user name (see \-\-user option) and \*(Aqsecret\*(Aq as password (see \-\-pass option)\&.
+.SH "EXAMPLES"
+.SS "List available entites"
+.PP
+Following command shows the list of organizations the user has access to (i\&.e\&. is member of):
+.RS 4
+ 
+.RE
+.RS 4
+comodit organizations list
+.RE
+.SS "Show an entity\*(Aqs details"
+.PP
+Following command shows the details of a distribution DIST from organization ORG the user has access to (i\&.e\&. is member of):
+.RS 4
+ 
+.RE
+.RS 4
+comodit distributions show ORG DIST
+.RE
+.SS "Provision a host"
+.PP
+Following command provisions host HOST part of environment ENV from organization ORG:
+.RS 4
+ 
+.RE
+.RS 4
+comodit hosts provision ORG ENV HOST
+.RE
+.SS "Start a host\*(Aqs instance"
+.PP
+Following command starts the instance (i\&.e\&. VM) associated to host HOST part of environment ENV from organization ORG:
+.RS 4
+ 
+.RE
+.RS 4
+comodit hosts instance start ORG ENV HOST
+.RE
+.SH "AUTHORS"
+.PP
+\fBDaniel Bartz\fR <\&daniel.bartz@guardis.com\&>
+.br
+Guardis
+.RS 4
+Author.
+.RE
+.PP
+\fBSebastien Caps\fR <\&sebastien.caps@guardis.com\&>
+.br
+Guardis
+.RS 4
+Author.
+.RE
+.PP
+\fBGérard Dethier\fR <\&gerard.dethier@guardis.com\&>
+.br
+Guardis
+.RS 4
+Author.
+.RE
+.PP
+\fBLaurent Eschenauer\fR <\&laurent.eschenauer@guardis.com\&>
+.br
+Guardis
+.RS 4
+Author.
+.RE
+.PP
+\fBChristian Mack\fR <\&christian.mack@guardis.com\&>
+.br
+Guardis
+.RS 4
+Author.
+.RE
+.PP
+\fBSandro Munda\fR <\&sandro.munda@guardis.com\&>
+.br
+Guardis
+.RS 4
+Author.
+.RE

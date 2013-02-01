@@ -1,0 +1,9 @@
+{
+   "platform":"<plat-name>",
+   "settings": [
+     {
+       "key": "<k>",
+       "value": "<v>"
+     }
+   ]
+}

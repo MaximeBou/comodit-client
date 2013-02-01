@@ -1,0 +1,9 @@
+{
+   "distribution":"<dist-name>",
+   "settings": [
+     {
+       "key": "<k>",
+       "value": "<v>"
+     }
+   ]
+}

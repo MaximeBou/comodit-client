@@ -1,0 +1,42 @@
+{
+    "name":"my-distro",
+    "description":"A linux distribution",
+    "settings":
+    [
+        {
+            "key":"kickstartName",
+            "value":"<kickstart file name>"
+        },
+        {
+            "key":"vmlinuzPath",
+            "value":"<an absolute path>"
+        },
+        {
+            "key":"initrdPath",
+            "value":"<an absolute path>"
+        }
+    ],
+    "files":
+    [
+        {
+            "name": "<a file name>",
+            "parameters":
+            [
+                {
+                    "key": "<a key>",
+                    "value": "<a value>",
+                    "name": "<a name>",
+                    "description": "<a description>"
+                }
+            ]
+        }
+    ],
+    "parameters": [
+       {
+           "key": "<a key>",
+           "value": "<a value>",
+           "name": "<a name>",
+           "description": "<a description>"
+        }
+    ]
+}

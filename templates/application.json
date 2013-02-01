@@ -1,0 +1,83 @@
+{
+    "name":"my-app",
+    "description":"My application description",
+    "packages": [
+        {
+            "name":"<package name>"
+        }
+    ],
+    "services": [
+        {
+            "name":"<service name>",
+            "enabled":true
+        }
+    ],
+    "groups": [
+        {
+            "name":"<group name>",
+            "gid":-1
+        }
+    ],
+    "users": [
+        {
+            "name":"<user name>",
+            "password":"",
+            "loginGroup":"",
+            "groups":[],
+            "home":"",
+            "fullName":"",
+            "uid":-1,
+            "gid":-1,
+            "shell":""
+        }
+    ],
+    "files": [
+        {
+            "name":"myfile",
+            "path":"/path/to/file",
+            "owner":"root",
+            "group":"root",
+            "mode":"644",
+            "template": {
+                "name": "<file name>",
+                "delimiter": {
+                    "start": "${",
+                    "end": "}"
+                }
+            }
+        }
+    ],
+    "parameters": [
+        {
+            "key": "<a key>",
+            "value": "<a value>",
+            "name": "<a name>",
+            "description": "<a description>"
+        }
+    ],
+    "handlers": [
+        {
+            "do": [
+                {
+                    "action": "update", 
+                    "resource": "file://<file name>"
+                }, 
+                {
+                    "action": "execute", 
+                    "resource": "file://<file name>"
+                },
+                {
+                    "action": "restart", 
+                    "resource": "service://<service name>"
+                }, 
+                {
+                    "action": "reload", 
+                    "resource": "service://<service name>"
+                }
+            ], 
+            "on": [
+                "<setting key>"
+            ]
+        }
+    ]
+}
