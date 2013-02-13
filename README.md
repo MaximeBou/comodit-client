@@ -16,6 +16,50 @@ suppose that you already have a ComodIT account. If it is not yet the case, do
 not hesitate to [register](https://my.comodit.com/), it's free.
 
 
+# Install
+
+## From source
+
+1. Retrieve source from GitHub:
+
+        git clone git://github.com/comodit/comodit-client.git
+
+2. Change directory to downloaded source:
+
+        cd comodit-client
+
+3. Install the client using distutils (see [this page](http://docs.python.org/2/install/index.html) for more details).
+
+        python setup.py install
+
+
+## From repository
+
+### Fedora/CentOS Users
+
+1. Add ComodIT repository by executing the following command:
+
+    - On CentOS 6: `rpm -ivh http://dl.comodit.com/pub/centos/6/x86_64/comodit-release-6-3.el6.noarch.rpm`
+    - On Fedora 16: `rpm -ivh http://dl.comodit.com/pub/fedora/16/x86_64/comodit-release-16-2.fc16.noarch.rpm`
+    - On Fedora 17: `rpm -ivh http://dl.comodit.com/pub/fedora/17/x86_64/comodit-release-17-1.fc17.noarch.rpm`
+
+2. Install client with command `yum install comodit-client`.
+
+### Ubuntu/Debian Users
+
+1. Add ComodIT repository by executing the following command:
+
+        cat <<EOF > /etc/apt/sources.list.d/comodit.list
+        deb http://dl.comodit.com/pub debian-squeeze main
+        EOF
+
+2. Install repository key:
+
+        wget http://dl.comodit.com/pub/dists/comodit.asc -O /tmp/key; apt-key add /tmp/key; rm -f /tmp/key
+
+3. Install client with command `apt-get update; apt-get install comodit-client`.
+
+
 # Python Library
 
 ## Quickstart
