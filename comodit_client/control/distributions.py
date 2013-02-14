@@ -74,14 +74,14 @@ class DistributionsController(OrganizationEntityController):
     def _export(self, argv):
         self._options = globals.options
 
-        app = self._get_entity(argv)
+        dist = self._get_entity(argv)
 
-        root_folder = app.name
+        root_folder = dist.name
         if len(argv) > 2:
             root_folder = argv[2]
 
         export = Export(globals.options.force)
-        export.export_application(app, root_folder)
+        export.export_distribution(dist, root_folder)
 
     def _export_doc(self):
         return ActionDoc("export", "<org_name> <dist_name> [<output_folder>] [--force]", """
