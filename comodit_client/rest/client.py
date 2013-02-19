@@ -79,7 +79,7 @@ class HttpClient(object):
         return response
 
     def _encode_url(self, entity, parameters):
-        url = self.endpoint + "/" + urllib.quote(entity)
+        url = self.endpoint + "/" + urllib.quote(entity, "/%")
         if len(parameters) > 0:
             url = url + "?" + urllib.urlencode(parameters)
         return url

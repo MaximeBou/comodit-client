@@ -337,6 +337,21 @@ class Instance(Entity):
                 return p.value
         return None
 
+    def get_file_content(self, path):
+        """
+        Retrieves the content of a file on a host's instance.
+
+        @param path: The absolute path to a particular file.
+        @type path: string
+        @return: a reader to file's content.
+        @rtype: file-like object
+        """
+
+        try:
+            return self._http_client.read(self.url + "files/" + path.replace("/", "%2f"), decode = False)
+        except ApiException as e:
+            raise PythonApiException("Unable to get file: " + e.message)
+
     def start(self):
         """
         Starts instance.
