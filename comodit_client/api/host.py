@@ -203,7 +203,7 @@ class Instance(Entity):
     """
 
     @property
-    def identifier(self):
+    def name(self):
         return ""
 
     def create(self):

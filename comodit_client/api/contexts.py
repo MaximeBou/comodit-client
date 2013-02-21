@@ -96,7 +96,7 @@ class ApplicationContext(AbstractContext):
     """
 
     @property
-    def identifier(self):
+    def name(self):
         return self.application
 
     @property
@@ -178,6 +178,10 @@ class DistributionContext(AbstractContext):
     """
 
     @property
+    def name(self):
+        return ""
+
+    @property
     def url(self):
         return self.collection.url
 
@@ -253,6 +257,10 @@ class PlatformContext(AbstractContext):
     An platform context. An platform context represents the association
     of a platform with a host.
     """
+
+    @property
+    def name(self):
+        return ""
 
     @property
     def url(self):
