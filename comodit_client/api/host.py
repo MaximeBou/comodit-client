@@ -348,7 +348,7 @@ class Instance(Entity):
         """
 
         try:
-            return self._http_client.read(self.url + "files/" + path.replace("/", "%2f"), decode = False)
+            return self._http_client.read(self.url + "files", parameters = {"path": path}, decode = False)
         except ApiException as e:
             raise PythonApiException("Unable to get file: " + e.message)
 
