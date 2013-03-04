@@ -631,12 +631,13 @@ class ChangeCollection(Collection):
         @param show_processed: If true, asks all changes to the server, including
         already processed changes.
         @return: The list of changes in this collection.
-        @rtype: list of L{Entity}
+        @rtype: list of L{Change}
         """
 
+        params = parameters.copy()
         if show_processed:
-            parameters["show_processed"] = "true"
-        return super(ChangeCollection, self).list(parameters = parameters)
+            params["show_processed"] = "true"
+        return super(ChangeCollection, self).list(parameters = params)
 
 
 class Host(HasSettings):
