@@ -55,6 +55,7 @@ class ApplicationContextController(AbstractContextController):
         # actions
         self._register(["install"], self._install, self._print_install_completions)
         self._register(["uninstall"], self._uninstall, self._print_entity_completions)
+        self._register(["run-cmd"], self._run_command, self._print_run_completions)
 
         # 'install' and 'uninstall' are aliases for 'add' and 'delete'
         self._unregister(["add", "delete"])
@@ -62,6 +63,7 @@ class ApplicationContextController(AbstractContextController):
         self._doc = "Application contexts handling."
         self._register_action_doc(self._install_doc())
         self._register_action_doc(self._uninstall_doc())
+        self._register_action_doc(self._run_command_doc())
 
     def get_collection(self, argv):
         if len(argv) < 3:
@@ -104,7 +106,13 @@ class ApplicationContextController(AbstractContextController):
         if param_num < 3:
             self._print_collection_completions(param_num, argv)
         elif len(argv) > 2 and param_num == 3:
-            completions.print_identifiers(self._client.applications(argv[0]))
+            completions.print_identifiers(self._get_host(argv).applications())
+
+    def _print_run_completions(self, param_num, argv):
+        if param_num < 4:
+            self._print_entity_completions(param_num, argv)
+        elif len(argv) > 3 and param_num == 4:
+            completions.print_entity_identifiers(self._client.get_application(argv[0], argv[3]).commands)
 
     def _print_render_file_completions(self, param_num, argv):
         if param_num < 4:
@@ -122,9 +130,23 @@ class ApplicationContextController(AbstractContextController):
     def _uninstall(self, argv):
         self._delete(argv)
 
+    def _run_command(self, argv):
+        if len(argv) != 5:
+            raise ArgumentException("Wrong number of arguments");
+
+        host = self._get_host(argv)
+        app_name = argv[3]
+        key = argv[4]
+
+        host.get_application(app_name).run_command(key)
+
     def _uninstall_doc(self):
         return ActionDoc("uninstall", "<org_name> <env_name> <host_name> <app_name>", """
         Uninstall an application from host.""")
+
+    def _run_command_doc(self):
+        return ActionDoc("run-cmd", "<org_name> <env_name> <host_name> <app_name> <cmd_key>", """
+        Executes handlers associated to given key.""")
 
     def _render_file(self, argv):
         if len(argv) != 5:

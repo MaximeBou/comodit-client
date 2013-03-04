@@ -702,6 +702,90 @@ class Handler(JsonWrapper):
             print " "*(indent + 2), t
 
 
+class Command(JsonWrapper):
+    """
+    A command's representation.
+    """
+
+    @property
+    def identifier(self):
+        """
+        Command's identifier.
+
+        @rtype: string
+        """
+
+        return self.key
+
+    @property
+    def key(self):
+        """
+        Command's key.
+
+        @rtype: string
+        """
+
+        return self._get_field("key")
+
+    @key.setter
+    def key(self, key):
+        """
+        Sets command's key.
+
+        @param key: The key
+        @type key: string
+        """
+
+        self._set_field("key", key)
+
+    @property
+    def name(self):
+        """
+        Name of this command.
+
+        @rtype: string
+        """
+
+        return self._get_field("name")
+
+    @name.setter
+    def name(self, name):
+        """
+        Sets the name of this command.
+
+        @param name: Command's new name.
+        @type name: string
+        """
+
+        self._set_field("name", name)
+
+    @property
+    def description(self):
+        """
+        The description of this command.
+
+        @rtype: string
+        """
+
+        return self._get_field("description")
+
+    @description.setter
+    def description(self, description):
+        """
+        Sets the description of this command.
+
+        @param description: The new description.
+        @type description: string
+        """
+
+        self._set_field("description", description)
+
+    def show(self, indent = 0):
+        print " "*indent, "Name:", self.name
+        print " "*indent, "Description:", self.description
+        print " "*indent, "Key:", self.key
+
+
 class Application(HasParameters, IsStoreCapable):
     """
     Application entity representation. An application defines resources 
@@ -857,6 +941,36 @@ class Application(HasParameters, IsStoreCapable):
         return self.files().get(name)
 
     @property
+    def commands(self):
+        """
+        The commands associated to this application.
+
+        @rtype: list of L{Command}
+        """
+
+        return self._get_list_field("commands", lambda x: Command(x))
+
+    @commands.setter
+    def commands(self, commands):
+        """
+        Sets the commands associated to this application.
+
+        @param packages: The new list of packages to associate to this application.
+        @type packages: list of L{Command}
+        """
+
+        self._set_list_field("commands", commands)
+
+    def add_command(self, command):
+        """
+        Adds a command to this application.
+
+        @type package: L{Command}
+        """
+
+        self._add_to_list_field("commands", command)
+
+    @property
     def handlers(self):
         """
         The handlers associated to this application.
@@ -975,10 +1089,13 @@ class Application(HasParameters, IsStoreCapable):
         repos = self.repositories
         for r in repos:
             r.show(indent + 2)
+        print " "*indent, "Commands:"
+        commands = self.commands
+        for c in commands:
+            c.show(indent + 2)
         print " "*indent, "Handlers:"
         handlers = self.handlers
         for f in handlers:
             f.show(indent + 2)
 
         self._show_store_fields(indent)
-

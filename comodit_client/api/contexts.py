@@ -8,6 +8,8 @@ provided by this module.
 
 from comodit_client.api.settings import HasSettings, add_settings
 from comodit_client.api.collection import Collection
+from comodit_client.rest.exceptions import ApiException
+from comodit_client.api.exceptions import PythonApiException
 
 class AbstractContext(HasSettings):
     """
@@ -123,6 +125,16 @@ class ApplicationContext(AbstractContext):
         """
 
         self._set_field("application", application)
+
+    def run_command(self, key):
+        """
+        Requests the execution of the handler associated to given command key.
+
+        @param key: The key of a command.
+        @type key: string
+        """
+
+        self._http_client.update(self.url + "commands/" + key, decode = False)
 
     def _show(self, indent = 0):
         print " "*indent, "Application:", self.application
