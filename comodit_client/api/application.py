@@ -786,6 +786,62 @@ class Command(JsonWrapper):
         print " "*indent, "Key:", self.key
 
 
+class CompatibilityRule(JsonWrapper):
+    @property
+    def os_type(self):
+        """
+        An OS type (centos, fedora, debian, etc.).
+
+        @rtype: string
+        """
+
+        return self._get_field("type")
+
+    @os_type.setter
+    def os_type(self, os_type):
+        """
+        Sets the OS type.
+
+        @param os_type: The OS type.
+        @type os_type: string
+        """
+
+        self._set_field("type", os_type)
+
+    @property
+    def version(self):
+        """
+        The OS version.
+
+        @rtype: string
+        """
+
+        return self._get_field("version")
+
+    @version.setter
+    def version(self, version):
+        """
+        Sets the OS version.
+
+        @param version: The new OS version.
+        @type version: string
+        """
+
+        self._set_field("version", version)
+
+    def show(self, indent = 0):
+        """
+        Prints this rule to standard output in a user-friendly way.
+
+        @param indent: The number of spaces to put in front of each displayed
+        line.
+        @type indent: int
+        """
+
+        print " "*indent, "OS type:", self.os_type
+        print " "*indent, "OS version:", self.version
+
+
 class Application(HasParameters, IsStoreCapable):
     """
     Application entity representation. An application defines resources 
@@ -1059,12 +1115,46 @@ class Application(HasParameters, IsStoreCapable):
 
         self._add_to_list_field("repositories", repo)
 
+    @property
+    def compatibility(self):
+        """
+        The compatibility rules associated to this application.
+
+        @rtype: list of L{CompatibilityRule}
+        """
+
+        return self._get_list_field("compatibility", lambda x: CompatibilityRule(x))
+
+    @compatibility.setter
+    def compatibility(self, compatibility):
+        """
+        Sets the compatibility rules associated to this application.
+
+        @param compatibility: The new list of compatibility rules to associate to this application.
+        @type compatibility: list of L{CompatibilityRule}
+        """
+
+        self._set_list_field("compatibility", compatibility)
+
+    def add_compatibility_rule(self, rule):
+        """
+        Adds a compatibility rule to this application.
+
+        @type package: L{CompatibilityRule}
+        """
+
+        self._add_to_list_field("compatibility", rule)
+
     def _show(self, indent = 0):
         print " "*indent, "Name:", self.name
         print " "*indent, "Description:", self.description
 
         self._show_parameters(indent)
 
+        print " "*indent, "Compatibility rules:"
+        rules = self.compatibility
+        for r in rules:
+            r.show(indent + 2)
         print " "*indent, "Packages:"
         packages = self.packages
         for p in packages:
