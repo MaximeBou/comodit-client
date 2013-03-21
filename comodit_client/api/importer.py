@@ -487,8 +487,8 @@ class ActionsQueue:
                 print "Executing '" + a.get_summary() + "'"
                 try:
                     a.execute()
-                except Exception, e:
-                    print "Error:", e.message
+                except Exception as e:
+                    print "Error:", str(e)
             else:
                 print "Skipping '" + a.get_summary() + "'"
         print "-"*80
