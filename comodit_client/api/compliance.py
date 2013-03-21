@@ -398,27 +398,10 @@ class ComplianceError(Entity):
     applications (in fact, their entities) installed on a particular host.
     """
 
-    def __init__(self, collection, app_name, res_type, res_name):
-        """
-        Creates a compliance error given identification data i.e. an application
-        name, a resource type (services, files, packages, users, groups or repos)
-        and a resource name. A call to L{refresh} will fill remaining fields
-        of this compliance error.
-
-        @param collection: Compliance errors collection.
-        @type collection: L{ComplianceCollection}
-        @param app_name: The application name.
-        @type app_name: string
-        @param res_type: The resource type.
-        @type res_type: string
-        @param res_name: The resource name.
-        @type res_name: string
-        """
-
-        super(ComplianceError, self).__init__(collection)
-        self._set_field("application", app_name)
-        self._set_type_collection(res_type)
-        self._set_field("res_name", res_name)
+    def __init__(self, collection, json_data = None):
+        super(ComplianceError, self).__init__(collection, json_data)
+        if (json_data != None) and (json_data.has_key("res_type")):
+            self._set_type_collection(json_data["res_type"])
 
     @property
     def application(self):
@@ -590,6 +573,7 @@ class ComplianceCollection(Collection):
         """
 
         (app_name, res_type, res_name) = self.__split_name(identifier)
-        error = ComplianceError(self, app_name, res_type, res_name)
+
+        error = ComplianceError(self, {"application": app_name, "res_name":res_name, "res_type": res_type})
         error.refresh(parameters = parameters)
         return error
