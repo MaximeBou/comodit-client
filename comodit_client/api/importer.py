@@ -32,7 +32,7 @@ class Import(object):
     directories. Imported entities have generally been exported (see L{Export}).
     """
 
-    def __init__(self, skip_conflict = False, queue_actions = False):
+    def __init__(self, skip_conflict = False, queue_actions = False, insecure_upload = False):
         """
         Creates an importer instance. When importing entities, there might be
         conflicts with existing remote entities. In this case, import fails unless

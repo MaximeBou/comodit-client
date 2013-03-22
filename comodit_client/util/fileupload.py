@@ -7,10 +7,14 @@ class PyCurlCallBack(object):
     def response_callback(self, response):
         self.response += response
 
-def post_multipart(url, fields, files, headers = {}):
+def post_multipart(url, fields, files, insecure = False, headers = {}):
     c = pycurl.Curl()
     c.setopt(c.POST, 1)
     c.setopt(c.URL, str(url))
+
+    if insecure:
+        c.setopt(c.SSL_VERIFYPEER, 0)
+        c.setopt(c.SSL_VERIFYHOST, 0)
 
     # Build header
     curl_headers = []

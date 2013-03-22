@@ -6,6 +6,7 @@ Provides classes related to file entities, in particular L{HasFiles}.
 from comodit_client.util.json_wrapper import JsonWrapper
 from comodit_client.api.collection import Collection
 from comodit_client.api.entity import Entity
+from comodit_client.api.exceptions import PythonApiException
 
 
 class Delimiter(JsonWrapper):
@@ -96,7 +97,10 @@ class FileEntity(Entity):
         @type path: string
         """
 
-        self._http_client.upload_to_exising_file_with_path(path, self.content_url)
+        try:
+            self._http_client.upload_to_exising_file_with_path(path, self.content_url)
+        except Exception as e:
+            raise PythonApiException("Could not set file content: " + str(e))
 
     def get_content(self):
         """

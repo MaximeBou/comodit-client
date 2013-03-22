@@ -105,6 +105,7 @@ Available entities:
 
     parser.add_argument("--skip-conflict", dest = "skip_conflict", help = "Skip conflicts on import", action = "store_true", default = False)
     parser.add_argument("--dry-run", dest = "dry_run", help = "Dry-run for import", action = "store_true", default = False)
+    parser.add_argument("--insecure", dest = "insecure", help = "Tells the client to ignore self-signed certificates", action = "store_true", default = False)
 
     parser.add_argument("--public", dest = "public", help = "List only public apps/dists", action = "store_true", default = False)
     parser.add_argument("--private", dest = "private", help = "List only private apps/dists", action = "store_true", default = False)
@@ -199,7 +200,7 @@ def _parse(argv):
         password = config.get_password(globals.options.profile_name)
         globals.options.password = password
 
-    client = Client(api, username, password)
+    client = Client(api, username, password, globals.options.insecure)
 
     entity_args = [] + globals.options.subentities
 

@@ -15,10 +15,11 @@ from comodit_client.rest.exceptions import ApiException
 
 
 class HttpClient(object):
-    def __init__(self, endpoint, username, password):
+    def __init__(self, endpoint, username, password, insecure_upload = False):
         self.endpoint = endpoint.rstrip('/')
         self.username = username
         self.password = password
+        self._insecure_upload = insecure_upload
 
     def create(self, entity, item = None, parameters = {}, decode = True):
         url = self._encode_url(entity, parameters)
@@ -75,7 +76,8 @@ class HttpClient(object):
     def upload_to_exising_file_with_path(self, file_name, path):
         response = fileupload.post_multipart(self._encode_url(path, []), [],
                                              [("file", file_name)],
-                                             {"Authorization": self._get_basic_authorization_field()})
+                                             insecure = self._insecure_upload,
+                                             headers = {"Authorization": self._get_basic_authorization_field()})
         return response
 
     def _encode_url(self, entity, parameters):
