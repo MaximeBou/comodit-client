@@ -1,4 +1,4 @@
-import os, pwd, grp
+import os
 
 from comodit_client.util import path
 from comodit_client.control.exceptions import ControllerException
@@ -39,21 +39,14 @@ class TreeRenderer(object):
                 with open(output_file, "w") as fd:
                     fd.write(content.read())
 
-                # Set permissions
-                mode = int(f.mode, 8)
-                owner = f.owner
-                owner_id = pwd.getpwnam(owner)[2]
-                group = f.group
-                group_id = grp.getgrnam(group)[2]
-
                 if not skip_chmod:
                     try:
-                        os.chmod(output_file, mode)
+                        path.chmod(output_file, f.mode)
                     except OSError, e:
                         raise ControllerException("Could not set permissions on file " + output_file + ": " + e.strerror)
 
                 if not skip_chown:
                     try:
-                        os.chown(output_file, owner_id, group_id)
+                        path.chown(output_file, f.owner, f.group)
                     except OSError, e:
                         raise ControllerException("Could not set ownership on file " + output_file + ": " + e.strerror)
