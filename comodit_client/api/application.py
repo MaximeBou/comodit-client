@@ -702,15 +702,15 @@ class Handler(JsonWrapper):
             print " "*(indent + 2), t
 
 
-class Command(JsonWrapper):
+class CustomAction(JsonWrapper):
     """
-    A command's representation.
+    A custom action's representation.
     """
 
     @property
     def identifier(self):
         """
-        Command's identifier.
+        Custom action's identifier.
 
         @rtype: string
         """
@@ -720,7 +720,7 @@ class Command(JsonWrapper):
     @property
     def key(self):
         """
-        Command's key.
+        Custom action's key.
 
         @rtype: string
         """
@@ -730,7 +730,7 @@ class Command(JsonWrapper):
     @key.setter
     def key(self, key):
         """
-        Sets command's key.
+        Sets custom action's key.
 
         @param key: The key
         @type key: string
@@ -741,7 +741,7 @@ class Command(JsonWrapper):
     @property
     def name(self):
         """
-        Name of this command.
+        Name of this custom action.
 
         @rtype: string
         """
@@ -751,9 +751,9 @@ class Command(JsonWrapper):
     @name.setter
     def name(self, name):
         """
-        Sets the name of this command.
+        Sets the name of this custom action.
 
-        @param name: Command's new name.
+        @param name: Custom action's new name.
         @type name: string
         """
 
@@ -762,7 +762,7 @@ class Command(JsonWrapper):
     @property
     def description(self):
         """
-        The description of this command.
+        The description of this custom action.
 
         @rtype: string
         """
@@ -772,7 +772,7 @@ class Command(JsonWrapper):
     @description.setter
     def description(self, description):
         """
-        Sets the description of this command.
+        Sets the description of this custom action.
 
         @param description: The new description.
         @type description: string
@@ -997,34 +997,34 @@ class Application(HasParameters, IsStoreCapable):
         return self.files().get(name)
 
     @property
-    def commands(self):
+    def actions(self):
         """
-        The commands associated to this application.
+        The custom actions associated to this application.
 
-        @rtype: list of L{Command}
+        @rtype: list of L{CustomAction}
         """
 
-        return self._get_list_field("commands", lambda x: Command(x))
+        return self._get_list_field("actions", lambda x: CustomAction(x))
 
-    @commands.setter
-    def commands(self, commands):
+    @actions.setter
+    def actions(self, actions):
         """
-        Sets the commands associated to this application.
+        Sets the actions associated to this application.
 
         @param packages: The new list of packages to associate to this application.
-        @type packages: list of L{Command}
+        @type packages: list of L{CustomAction}
         """
 
-        self._set_list_field("commands", commands)
+        self._set_list_field("actions", actions)
 
-    def add_command(self, command):
+    def add_custom_action(self, action):
         """
-        Adds a command to this application.
+        Adds a custom action to this application.
 
-        @type package: L{Command}
+        @type package: L{CustomAction}
         """
 
-        self._add_to_list_field("commands", command)
+        self._add_to_list_field("actions", action)
 
     @property
     def handlers(self):
@@ -1179,9 +1179,9 @@ class Application(HasParameters, IsStoreCapable):
         repos = self.repositories
         for r in repos:
             r.show(indent + 2)
-        print " "*indent, "Commands:"
-        commands = self.commands
-        for c in commands:
+        print " "*indent, "Custom actions:"
+        actions = self.actions
+        for c in actions:
             c.show(indent + 2)
         print " "*indent, "Handlers:"
         handlers = self.handlers

@@ -126,15 +126,15 @@ class ApplicationContext(AbstractContext):
 
         self._set_field("application", application)
 
-    def run_command(self, key):
+    def run_custom_action(self, key):
         """
-        Requests the execution of the handler associated to given command key.
+        Requests the execution of the handler associated to given custom action key.
 
-        @param key: The key of a command.
+        @param key: The key of a custom action.
         @type key: string
         """
 
-        self._http_client.update(self.url + "commands/" + key, decode = False)
+        self._http_client.update(self.url + "actions/" + key, decode = False)
 
     def _show(self, indent = 0):
         print " "*indent, "Application:", self.application
