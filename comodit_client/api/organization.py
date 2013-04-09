@@ -86,7 +86,7 @@ class GroupCollection(Collection):
     """
 
     def _new(self, json_data = None):
-        return Group(json_data)
+        return Group(self, json_data)
 
 
 class Group(Entity):
