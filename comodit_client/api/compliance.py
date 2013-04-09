@@ -400,8 +400,8 @@ class ComplianceError(Entity):
 
     def __init__(self, collection, json_data = None):
         super(ComplianceError, self).__init__(collection, json_data)
-        if (json_data != None) and (json_data.has_key("res_type")):
-            self._set_type_collection(json_data["res_type"])
+        if (json_data != None) and (json_data.has_key("type")):
+            self._set_type_collection(json_data["type"])
 
     @property
     def application(self):
@@ -574,6 +574,6 @@ class ComplianceCollection(Collection):
 
         (app_name, res_type, res_name) = self.__split_name(identifier)
 
-        error = ComplianceError(self, {"application": app_name, "res_name":res_name, "res_type": res_type})
+        error = ComplianceError(self, {"application": app_name, "name":res_name, "type": res_type})
         error.refresh(parameters = parameters)
         return error
