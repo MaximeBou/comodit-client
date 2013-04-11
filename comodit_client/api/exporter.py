@@ -40,8 +40,14 @@ class Export(object):
     def _export_files_content(self, entity, output_folder):
         for template in entity.files():
             file_name = template.name
-            with open(os.path.join(output_folder, file_name), "w") as f:
-                f.write(template.get_content().read())
+            try:
+                with open(os.path.join(output_folder, file_name), "w") as f:
+                    f.write(template.get_content().read())
+            except ApiException as e:
+                if e.code == 404:
+                    pass
+                else:
+                    raise e
 
     def _export_entity(self, res, res_folder, export_files = False, export_thumb = False):
         print "exporting", res.name, "to", res_folder
