@@ -50,7 +50,7 @@ class AppStoreCollection(Collection):
         """
 
         app = self.new(app_uuid, authorized_orgs)
-        app._create()
+        app.create()
         return app
 
     def get(self, identifier = "", parameters = {}, org_name = None):
@@ -106,7 +106,7 @@ class DistStoreCollection(Collection):
         """
 
         dist = self.new(dist_uuid, authorized_orgs)
-        dist._create()
+        dist.create()
         return dist
 
     def get(self, identifier = "", parameters = {}, org_name = None):
