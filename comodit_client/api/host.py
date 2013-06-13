@@ -40,7 +40,7 @@ class HostCollection(Collection):
     def new(self, name, description = "", plat = None, dist = None, apps = []):
         """
         Instantiates a new host object.
-        
+
         @param name: Host's name.
         @type name: string
         @param description: Host's description.
@@ -336,6 +336,17 @@ class Instance(Entity):
             if p.key == key:
                 return p.value
         return None
+
+    def alerts(self):
+        """
+        Instantiates MonitorinAlert collection.
+
+        @return: MonitoringAlert collection.
+        @rtype: L{MonitoringAlertCollection}
+        """
+
+        return MonitoringAlertCollection(self.client, self.url + "alerts/")
+
 
     def get_file_content(self, path):
         """
@@ -639,6 +650,106 @@ class ChangeCollection(Collection):
             params["show_processed"] = "true"
         return super(ChangeCollection, self).list(parameters = params)
 
+class MonitoringAlert(Entity):
+    """
+    TODO
+    """
+
+    @property
+    def identifier(self):
+        return str(self.timestamp)
+
+    @property
+    def name(self):
+        return self.identifier
+
+    @property
+    def label(self):
+        return "%s/%s: %s" % (self.plugin, self.sensor, self.output)
+
+    @property
+    def timestamp(self):
+        """
+        The timestamp of the alert.
+
+        @rtype: int
+        """
+
+        return self._get_field("timestamp")
+
+    @property
+    def plugin(self):
+        """
+        The plugin the alert relates to.
+
+        @rtype: string
+        """
+
+        return self._get_field("collection")
+
+    @property
+    def sensor(self):
+        """
+        The sendor from the plugin the alert relates to.
+
+        @rtype: string
+        """
+
+        return self._get_field("property")
+
+    @property
+    def output(self):
+        """
+        The outout of the alert.
+
+        @rtype: string
+        """
+
+        return self._get_field("output")
+
+    @property
+    def threshold(self):
+        """
+        The threshold of the alert.
+
+        @rtype: string
+        """
+
+        return self._get_field("threshold")
+
+    @property
+    def level(self):
+        """
+        The level of the alert.
+
+        @rtype: string
+        """
+
+        return self._get_field("level")
+
+    @property
+    def comparator(self):
+        """
+        The compare method used for the alert.
+
+        @rtype: string
+        """
+
+        return self._get_field("compare_method")
+
+    def _show(self, indent = 0):
+        print " "*indent, "Timestamp:", self.timestamp
+        print " "*indent, "Plugin:", self.plugin
+        print " "*indent, "Sensor:", self.sensor
+        print " "*indent, "Output:", self.output
+
+class MonitoringAlertCollection(Collection):
+    """
+    TODO
+    """
+
+    def _new(self, json_data = None):
+        return MonitoringAlert(self, json_data)
 
 class Host(HasSettings):
     """
@@ -744,7 +855,7 @@ class Host(HasSettings):
         considered by the server at creation time. In order to set/change the platform
         associated to a host later, one has to (re-)create the platform context
         associated to this host (see L{Host.platform()}).
-        
+
         @param platform: The name of the platform.
         @type platform: string
         """
@@ -829,7 +940,7 @@ class Host(HasSettings):
     def get_instance(self):
         """
         Fetches host's instance.
-        
+
         @return: Host's instance.
         @rtype: L{Instance}
         """
@@ -849,7 +960,7 @@ class Host(HasSettings):
         """
         Triggers host's provisioning. A distribution and a platform must be
         associated to the host in order to provision it.
-        
+
         @return: The host's instance.
         @rtype: L{Instance}
         """
@@ -923,7 +1034,7 @@ class Host(HasSettings):
 
     def get_app_link(self, app_name, file_name, short = False):
         """
-        Requests a one-time URL for a rendered application file. A one-time URL is 
+        Requests a one-time URL for a rendered application file. A one-time URL is
         accessible without authentication but has a limited life-time.
 
         @param app_name: The name of application.
@@ -1057,7 +1168,7 @@ class Host(HasSettings):
     def get_change(self, num):
         """
         Fetches a change from server.
-        
+
         @param num: The order number of the change.
         @type num: string
         @return: The change.
@@ -1088,7 +1199,7 @@ class Host(HasSettings):
 
     def get_compliance_error(self, identifier):
         """
-        Fetches a particular compliance error from server. 
+        Fetches a particular compliance error from server.
 
         @param identifier: Compliance error's identifier. It
         must have the following form: 'applications/I{app_name}/I{collection}/I{id}'

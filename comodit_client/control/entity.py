@@ -29,6 +29,7 @@ class EntityController(AbstractController):
         self._default_action = self._help
 
         self._doc = "Generic entities handling."
+        self._str_empty = "No entities to list"
         self._register_action_doc(self._list_doc())
         self._register_action_doc(self._show_doc())
         self._register_action_doc(self._add_doc())
@@ -45,7 +46,7 @@ class EntityController(AbstractController):
         parameters = self._get_list_parameters(argv)
         entities_list = self._list_entities(argv, parameters = parameters)
         if(len(entities_list) == 0):
-            print "No entities to list"
+            print self._str_empty
         else:
             for r in entities_list:
                 print r.label

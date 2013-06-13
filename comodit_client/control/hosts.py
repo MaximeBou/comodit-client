@@ -24,7 +24,7 @@ from comodit_client.config import Config
 from comodit_client.control.compliance import ComplianceController
 from comodit_client.control.live import LiveController
 from comodit_client.control.changes import ChangeController
-
+from comodit_client.control.alerts import MonitoringAlertController
 
 class HostsController(EntityController):
 
@@ -42,6 +42,7 @@ class HostsController(EntityController):
         self._register_subcontroller(["platform"], PlatformContextController())
         self._register_subcontroller(["compliance"], ComplianceController())
         self._register_subcontroller(["changes"], ChangeController())
+        self._register_subcontroller(["alerts"], MonitoringAlertController())
         self._register_subcontroller(["live"], LiveController())
 
         # actions
