@@ -2,6 +2,7 @@
 .project
 .pydevproject
 *.pyc
+*.swp
 build
 dist
 *.egg-info
