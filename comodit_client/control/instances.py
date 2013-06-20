@@ -20,6 +20,7 @@ class InstancesController(EntityController):
         self._register(["poweroff"], self._poweroff, self._print_entity_completions)
         self._register(["properties"], self._properties, self._print_entity_completions)
         self._register(["show_file"], self._show_file, self._print_entity_completions)
+        self._register(["get_status"], self._get_status, self._print_entity_completions)
 
         # Unregister unsupported actions
         self._unregister(["update", "list", "add"])
@@ -34,6 +35,8 @@ class InstancesController(EntityController):
         self._register_action_doc(self._poweroff_doc())
         self._register_action_doc(self._properties_doc())
         self._register_action_doc(self._show_file_doc())
+        self._register_action_doc(self._get_status_doc())
+
 
     def get_collection(self, argv):
         if len(argv) < 3:
@@ -129,4 +132,15 @@ class InstancesController(EntityController):
 
     def _show_file_doc(self):
         return ActionDoc("show_file", "<org_name>  <env_name> <host_name> <path>", """
+        Show a host's file content.""")
+
+    def _get_status(self, argv):
+        if len(argv) < 5:
+            raise ArgumentException("Wrong number of arguments");
+
+        instance = self._get_entity(argv)
+        print instance.get_status(argv[3], argv[4]),
+
+    def _get_status_doc(self):
+        return ActionDoc("get_status", "<org_name>  <env_name> <host_name> <collection> <sensor>", """
         Show a host's file content.""")

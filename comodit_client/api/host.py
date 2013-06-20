@@ -363,6 +363,24 @@ class Instance(Entity):
         except ApiException as e:
             raise PythonApiException("Unable to get file: " + e.message)
 
+    def get_status(self, collection, sensor):
+        """
+        Retrieves the value of a monitoring sensor on a host's instance.
+
+        @param collection: The collection to query (e.g. host, apache).
+        @param sensor: The specific sensor to query.
+        @type collection: string
+        @type sensor: string
+        @return: the value read from the sensor.
+        @rtype: string
+        """
+
+        try:
+            result = self._http_client.read(self.url + "status" + "/" + collection + "/" + sensor, decode = True)
+            return result["status"][sensor]
+        except ApiException as e:
+            raise PythonApiException("Unable to get sensor content: " + e.message)
+
     def start(self):
         """
         Starts instance.
@@ -494,6 +512,27 @@ class Instance(Entity):
             return publicip
         else:
             return ip
+
+    def wait_for_state(self, state, time_out = 0):
+        """
+        Waits until instance has requested state.
+
+        @param state: The expected state (see L{Instance.State}).
+        @type state: string
+        @param time_out: A time-out expressed in seconds. A time-out of 0 seconds
+        means no time-out (method can wait forever).
+        @type time_out: int
+        """
+
+        start_time = time.time()
+        self.refresh()
+        while self.state != state:
+            time.sleep(3)
+            now = time.time()
+            if time_out > 0 and (now - start_time) > time_out:
+                break
+            self.refresh()
+
 
 
 class Task(JsonWrapper):
