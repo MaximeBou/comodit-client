@@ -5,11 +5,21 @@ TMP_DIR=/tmp/comodit-client
 
 cd `dirname $0`
 cd ..
-
 # Set version information
-. scripts/build-pkg-functions
-set_version $1 $2
-generate_version_file $VERSION $RELEASE
+VERSION=`git describe --tags  | awk -F"-" '{print $2}'`
+RELEASE=`git describe --tags  | awk -F"-" '{print $3}'`
+COMMIT=`git describe --tags  | awk -F"-" '{print $4}'`
+MESSAGE="Release $VERSION-$RELEASE-$COMMIT"
+
+echo $MESSAGE
+
+export DEBEMAIL
+export DEBFULLNAME
+
+debchange --newversion $VERSION-$RELEASE "$MESSAGE"
+
+unset DEBEMAIL
+unset DEBFULLNAME
 
 # Build package
 DIST_DIR=${TMP_DIR}/dist
