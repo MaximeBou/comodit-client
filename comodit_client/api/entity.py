@@ -185,7 +185,7 @@ class Entity(JsonWrapper):
 
         self.__enforce_connected()
         current_url = self.url
-        self.set_name(new_name)
+        self._set_field("name",new_name)
         self.set_json(self._http_client.update(current_url, self.get_json()))
 
     def update(self, force = False):
