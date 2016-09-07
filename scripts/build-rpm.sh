@@ -2,8 +2,11 @@
 
 NAME="comodit-client"
 SPEC_FILE_NAME="comodit-client"
-PLATFORMS="epel-6-i386 fedora-19-i386 fedora-20-i386 epel-7-x86_64 fedora-21-x86_64"
+PLATFORMS=(epel-6-i386 epel-6-x86_64 epel-7-x86_64 fedora-22-x86_64 fedora-23-x86_64 fedora-24-x86_64)
 TAR_CONTENT="comodit_client templates setup.py comodit auto_completion/comodit README.md doc/comodit.1 rpmbuild/etc"
+
+# Create build structure
+rpmdev-setuptree
 
 cd `dirname $0`
 cd ..
@@ -18,10 +21,15 @@ tar -cvzf $HOME/rpmbuild/SOURCES/${NAME}-${VERSION}-${RELEASE}.tar.gz ${TAR_CONT
 sed "s/#VERSION#/${VERSION}/g" rpmbuild/SPECS/${SPEC_FILE_NAME}.spec.template > rpmbuild/SPECS/${SPEC_FILE_NAME}.spec
 sed -i "s/#RELEASE#/${RELEASE}/g" rpmbuild/SPECS/${SPEC_FILE_NAME}.spec
 sed -i "s/#COMMIT#/${COMMIT}/g" rpmbuild/SPECS/${SPEC_FILE_NAME}.spec
+
 rpmbuild -ba rpmbuild/SPECS/${SPEC_FILE_NAME}.spec
 
-for platform in $PLATFORMS
+if [ -f "/usr/bin/mock" ]
+then
+for platform in "${PLATFORMS[@]}"
 do
     /usr/bin/mock -r ${platform} --rebuild $HOME/rpmbuild/SRPMS/${NAME}-${VERSION}-${RELEASE}*.src.rpm
+    mkdir -p $HOME/packages/${platform}
+    cp -f /var/lib/mock/${platform}/result/*.rpm $HOME/packages/${platform}
 done
-
+fi
